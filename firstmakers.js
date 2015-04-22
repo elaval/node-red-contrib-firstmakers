@@ -99,13 +99,17 @@ module.exports = function(RED) {
             try {
                 device.write(outdata);
                 device.read(function(err,data) {
-                    var celsius = ((data[2] << 8) + data[1]);
-                    celsius = (celsius * 0.0625);
+                	if (!err) {
+	                    var celsius = ((data[2] << 8) + data[1]);
+	                    celsius = (celsius * 0.0625);
 
-                    var lux = (data[4] << 8) + data[3];
-                    lux = lux*1.2;
+	                    var lux = (data[4] << 8) + data[3];
+	                    lux = lux*1.2;
 
-                    deferred.resolve({"celsius":celsius, "lux":lux});
+	                    deferred.resolve({"celsius":celsius, "lux":lux});
+                	} else {
+                		deferred.reject(err);
+                	}
                 })
 
             } 
