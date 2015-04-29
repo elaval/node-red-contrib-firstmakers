@@ -22,13 +22,11 @@
 module.exports = function(RED) {
     "use strict";
     // require any external libraries we may need....
-    //var foo = require("foo-library");
-    //var Galileo = require("galileo-io");
-    //var board = new Galileo();
-    var ArduinoFirmata = require('arduino-firmata');
+    var firmata = require('firmata');
+    var serialport =require('serialport');
     var fs = require('fs');
     var Q = require('q');
-    var portlist = ArduinoFirmata.list(function (err, ports) {
+    var portlist = serialport.list(function (err, ports) {
         portlist = ports;
     });
 
@@ -99,17 +97,13 @@ module.exports = function(RED) {
             try {
                 device.write(outdata);
                 device.read(function(err,data) {
-                	if (!err) {
-	                    var celsius = ((data[2] << 8) + data[1]);
-	                    celsius = (celsius * 0.0625);
+                    var celsius = ((data[2] << 8) + data[1]);
+                    celsius = (celsius * 0.0625);
 
-	                    var lux = (data[4] << 8) + data[3];
-	                    lux = lux*1.2;
+                    var lux = (data[4] << 8) + data[3];
+                    lux = lux*1.2;
 
-	                    deferred.resolve({"celsius":celsius, "lux":lux});
-                	} else {
-                		deferred.reject(err);
-                	}
+                    deferred.resolve({"celsius":celsius, "lux":lux});
                 })
 
             } 
@@ -160,10 +154,10 @@ module.exports = function(RED) {
     var closeHandler = function(silent) {
 
         if (myArduino) {
-            var port = myArduino.serialport.path;
+            var port = myArduino.sp.path;
 
-            //myArduino.serialport.removeListener('disconnect', disconnectHandler);
-            myArduino.serialport.removeListener('close', closeHandler);
+            myArduino.sp.removeListener('disconnect', closeHandler);
+            myArduino.sp.removeListener('close', closeHandler);
             //myArduino.serialport.removeListener('error', myself.arduino.errorHandler);
             
             oldBoards.push(myArduino);
@@ -173,31 +167,56 @@ module.exports = function(RED) {
         console.log('Board was disconnected from port '+ port)
     }
             
+    var getArduinoPortList = function() {
+        var deferred = Q.defer();
+
+        var portList = [];
+        var portcheck = /usb|DevB|rfcomm|acm|^com/i; // Not sure about rfcomm! We must dig further how bluetooth works in Gnu/Linux
+
+        serialport.list(function (err, ports) { 
+            if (err) {
+                deferred.reject(err);
+            } else { 
+                ports.forEach(function(each) { 
+                    if(portcheck.test(each.comName)) {
+                        portList.push(each.comName); 
+                    }
+                });
+                deferred.resolve(portList);
+            }
+        });
+
+        return deferred.promise;
+
+    }
 
     var attemptToConnect = function() {
         var deferred = Q.defer();
-        
-        ArduinoFirmata.list(function (err, ports) {
+
+        getArduinoPortList()
+        .then(function(ports) {
             if (ports.length>0) {
                 
-                var arduino = new ArduinoFirmata();
-                arduino.connect(ports[0]);
+                var board = undefined;
+
+                // set timeout for connection
                 var to = setTimeout(function() {
-                    arduino = undefined;
                     deferred.reject(new Error("Cound not connect to arduino board at "+ports[0]));
                 },10000);
-                arduino.on("boardReady", function() {
-                    clearTimeout(to);
-                    arduino.serialport.on('close', closeHandler);
-                    deferred.resolve(arduino);
-                })
+
+                var board = new firmata.Board(ports[0],function(){
+                   clearTimeout(to);
+                    board.sp.on('close', closeHandler);
+                    board.sp.on('disconnect', closeHandler);
+                    deferred.resolve(board);
+                  //arduino is ready to communicate
+                });  
 
             } else {
                 deferred.reject(new Error("No arduino boards available"));
-            }
-            
-        });
-
+            }  
+        })
+        
         return deferred.promise;
     }
 
@@ -252,13 +271,16 @@ module.exports = function(RED) {
             //msg.pin = node.pin;
             getArduino()
             .then(function(board) {
-                var sensors = [];
-                sensors[0] =  board.analogRead(0);
-                sensors[1] =  board.analogRead(1);
-                sensors[2] =  board.analogRead(2);
-                sensors[3] =  board.analogRead(3);
-                sensors[4] =  board.analogRead(4);
-                sensors[5] =  board.analogRead(5);
+                
+                var sensors = {};
+                
+                // get the value for each analog pin
+                board.analogPins.forEach(function(pin, analogPin) {
+                    board.pinMode(board.analogPins[analogPin], board.MODES.ANALOG);
+    
+                    sensors["a"+analogPin] = board.pins[board.analogPins[analogPin]].value;
+                })
+                
                 msg.payload = sensors;
                 node.send(msg);
             })
@@ -316,7 +338,7 @@ module.exports = function(RED) {
 
 
     RED.httpAdmin.get("/arduinoports", RED.auth.needsPermission("arduino.read"), function(req,res) {
-        ArduinoFirmata.list(function (err, ports) {
+        serialport.list(function (err, ports) {
             res.json(ports);
         });
     });
