@@ -4,96 +4,19 @@
 3 info using node@v0.10.36
 4 verbose node symlink /usr/local/bin/node
 5 verbose publish [ '.' ]
-6 verbose cache add [ '.', null ]
-7 verbose cache add name=undefined spec="." args=[".",null]
-8 verbose parsed url { protocol: null,
-8 verbose parsed url   slashes: null,
-8 verbose parsed url   auth: null,
-8 verbose parsed url   host: null,
-8 verbose parsed url   port: null,
-8 verbose parsed url   hostname: null,
-8 verbose parsed url   hash: null,
-8 verbose parsed url   search: null,
-8 verbose parsed url   query: null,
-8 verbose parsed url   pathname: '.',
-8 verbose parsed url   path: '.',
-8 verbose parsed url   href: '.' }
-9 silly lockFile 3a52ce78- .
-10 verbose lock . /Users/elaval/.npm/3a52ce78-.lock
-11 verbose tar pack [ '/Users/elaval/.npm/node-red-contrib-firstmakers/0.0.1/package.tgz',
-11 verbose tar pack   '.' ]
-12 verbose tarball /Users/elaval/.npm/node-red-contrib-firstmakers/0.0.1/package.tgz
-13 verbose folder .
-14 info prepublish node-red-contrib-firstmakers@0.0.1
-15 silly lockFile 1f1177db-tar tar://.
-16 verbose lock tar://. /Users/elaval/.npm/1f1177db-tar.lock
-17 silly lockFile 65e43d66-ib-firstmakers-0-0-1-package-tgz tar:///Users/elaval/.npm/node-red-contrib-firstmakers/0.0.1/package.tgz
-18 verbose lock tar:///Users/elaval/.npm/node-red-contrib-firstmakers/0.0.1/package.tgz /Users/elaval/.npm/65e43d66-ib-firstmakers-0-0-1-package-tgz.lock
-19 silly lockFile 1f1177db-tar tar://.
-20 silly lockFile 1f1177db-tar tar://.
-21 silly lockFile 65e43d66-ib-firstmakers-0-0-1-package-tgz tar:///Users/elaval/.npm/node-red-contrib-firstmakers/0.0.1/package.tgz
-22 silly lockFile 65e43d66-ib-firstmakers-0-0-1-package-tgz tar:///Users/elaval/.npm/node-red-contrib-firstmakers/0.0.1/package.tgz
-23 silly lockFile 42f0ec8b-ontrib-firstmakers-0-0-1-package /Users/elaval/.npm/node-red-contrib-firstmakers/0.0.1/package
-24 verbose lock /Users/elaval/.npm/node-red-contrib-firstmakers/0.0.1/package /Users/elaval/.npm/42f0ec8b-ontrib-firstmakers-0-0-1-package.lock
-25 silly lockFile 42f0ec8b-ontrib-firstmakers-0-0-1-package /Users/elaval/.npm/node-red-contrib-firstmakers/0.0.1/package
-26 silly lockFile 42f0ec8b-ontrib-firstmakers-0-0-1-package /Users/elaval/.npm/node-red-contrib-firstmakers/0.0.1/package
-27 silly lockFile 3a52ce78- .
-28 silly lockFile 3a52ce78- .
-29 silly publish { name: 'node-red-contrib-firstmakers',
-29 silly publish   version: '0.0.1',
-29 silly publish   description: '',
-29 silly publish   scripts: { test: 'echo "Error: no test specified" && exit 1' },
-29 silly publish   author: { name: 'Ernesto Laval' },
-29 silly publish   license: 'ISC',
-29 silly publish   keywords: [ 'node-red' ],
-29 silly publish   'node-red': { nodes: { firstmakers: 'firstmakers.js' } },
-29 silly publish   gitHead: '0a15a7d3a0dc497f33ab2ec838d7004e177c4d39',
-29 silly publish   readme: 'ERROR: No README data found!',
-29 silly publish   _id: 'node-red-contrib-firstmakers@0.0.1',
-29 silly publish   _shasum: '054d5d2d2e0b0d97836b0996bcbb310f7f23f634',
-29 silly publish   _from: '.' }
-30 verbose request where is /node-red-contrib-firstmakers
-31 verbose request registry https://registry.npmjs.org/
-32 verbose request id 3455487881bd8231
-33 verbose url raw /node-red-contrib-firstmakers
-34 verbose url resolving [ 'https://registry.npmjs.org/',
-34 verbose url resolving   './node-red-contrib-firstmakers' ]
-35 verbose url resolved https://registry.npmjs.org/node-red-contrib-firstmakers
-36 verbose request where is https://registry.npmjs.org/node-red-contrib-firstmakers
-37 info trying registry request attempt 1 at 17:10:05
-38 http PUT https://registry.npmjs.org/node-red-contrib-firstmakers
-39 http 403 https://registry.npmjs.org/node-red-contrib-firstmakers
-40 verbose headers { date: 'Fri, 17 Apr 2015 16:10:06 GMT',
-40 verbose headers   server: 'Apache',
-40 verbose headers   'content-type': 'application/json',
-40 verbose headers   'cache-control': 'max-age=60',
-40 verbose headers   'content-length': '95',
-40 verbose headers   'accept-ranges': 'bytes',
-40 verbose headers   via: '1.1 varnish',
-40 verbose headers   'x-served-by': 'cache-ams4130-AMS',
-40 verbose headers   'x-cache': 'MISS',
-40 verbose headers   'x-cache-hits': '0',
-40 verbose headers   'x-timer': 'S1429287005.549955,VS0,VE1308',
-40 verbose headers   'keep-alive': 'timeout=10, max=50',
-40 verbose headers   connection: 'Keep-Alive' }
-41 error publish Failed PUT 403
-42 error Error: "You cannot publish over the previously published version 0.0.1." : node-red-contrib-firstmakers
-42 error     at RegClient.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:308:14)
-42 error     at Request._callback (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:246:65)
-42 error     at Request.self.callback (/usr/local/lib/node_modules/npm/node_modules/request/request.js:236:22)
-42 error     at Request.emit (events.js:98:17)
-42 error     at Request.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1142:14)
-42 error     at Request.emit (events.js:117:20)
-42 error     at IncomingMessage.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1096:12)
-42 error     at IncomingMessage.emit (events.js:117:20)
-42 error     at _stream_readable.js:944:16
-42 error     at process._tickCallback (node.js:442:13)
-43 error If you need help, you may report this *entire* log,
-43 error including the npm and node versions, at:
-43 error     <http://github.com/npm/npm/issues>
-44 error System Darwin 14.1.0
-45 error command "/usr/local/bin/node" "/usr/local/bin/npm" "publish"
-46 error cwd /Users/elaval/Documents/TIDE Exploraciones/Node-red/tide-modules/node-red-contrib-firstmakers
-47 error node -v v0.10.36
-48 error npm -v 1.4.28
-49 verbose exit [ 1, true ]
+6 error Failed to parse json
+6 error Unexpected token }
+7 error File: /Users/elaval/Documents/TIDE Exploraciones/Node-red/tide-modules/node-red-contrib-firstmakers/package.json
+8 error Failed to parse package.json data.
+8 error package.json must be actual JSON, not just JavaScript.
+8 error
+8 error This is not a bug in npm.
+8 error Tell the package author to fix their package.json file. JSON.parse
+9 error System Darwin 14.1.0
+10 error command "/usr/local/bin/node" "/usr/local/bin/npm" "publish"
+11 error cwd /Users/elaval/Documents/TIDE Exploraciones/Node-red/tide-modules/node-red-contrib-firstmakers
+12 error node -v v0.10.36
+13 error npm -v 1.4.28
+14 error file /Users/elaval/Documents/TIDE Exploraciones/Node-red/tide-modules/node-red-contrib-firstmakers/package.json
+15 error code EJSONPARSE
+16 verbose exit [ 1, true ]
