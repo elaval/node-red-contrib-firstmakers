@@ -11,7 +11,7 @@
 	"dependencies" : {
 		"q":"*",
 		"node-hid":"*",
-		"firmata"
+		"firmata":"*"
 	},
 	"node-red"     : {
 	    "nodes": {
