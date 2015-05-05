@@ -34,92 +34,6 @@ module.exports = function(RED) {
     var myArduino = undefined;
     var oldBoards = [];  // Store old boards to avoid wild events
 
-    // HID management (for SLT boards)
-    var HID = require('node-hid');
-
-    var mySLT = undefined;
-
-    var commandcodes = {
-        'led' : 0x80,
-        'temp_light' : 0x81,
-        'temp': 0x82,
-        'ligth': 0x83,
-        'bootloader' : 0x85,
-        'humidity' : 0x86,
-        'temp_light_humidity' : 0x87
-    };
-
-    var getSLTDevice = function() {
-        var deferred = Q.defer();
-
-        if (mySLT) {
-            deferred.resolve(mySLT);
-        } else {
-            var devices = HID.devices();
-            var devicePath = null
-            for (var i in devices) {
-                var device = devices[i];
-                if (device.vendorId == "1240" && device.productId == "63" && !devicePath) {
-                    devicePath = device.path;
-                }
-            }
-            if (devicePath) {
-                mySLT = new HID.HID(devicePath);
-                mySLT.on('error', sltErrorHandler);
-                deferred.resolve(mySLT); 
-            } else {
-                deferred.reject(new Error("No SLT board available"));
-            }
-
-        }
-
-        return deferred.promise;
-    }
-
-    var sltErrorHandler = function() {
-        console.log("ERROR HANDLER")
-
-        if (mySLT !== undefined) {
-            mySLT.removeListener('error', sltErrorHandler);
-            mySLT.close();
-            mySLT = undefined;
-        }
-        
-    }
-
-    var getDataLHT = function() {
-        var deferred = Q.defer();
-
-        getSLTDevice()
-        .then(function(device) {
-            var outdata = new Buffer(64);
-            outdata[0] = commandcodes['temp_light'];
-            try {
-                device.write(outdata);
-                device.read(function(err,data) {
-                    var celsius = ((data[2] << 8) + data[1]);
-                    celsius = (celsius * 0.0625);
-
-                    var lux = (data[4] << 8) + data[3];
-                    lux = lux*1.2;
-
-                    deferred.resolve({"celsius":celsius, "lux":lux});
-                })
-
-            } 
-            catch(err) {
-                console.log("CATCH");
-                deferred.reject(err);
-            }
-
-        })
-        .catch(function(err) {
-            deferred.reject(err);
-        })
- 
-        return deferred.promise;
-
-    }
 
     /*
     * getArduino
@@ -234,26 +148,8 @@ module.exports = function(RED) {
         return deferred.promise;
     }
 
-    // The Board Definition - this opens (and closes) the connection
-    function MakersBoardNode(n) {
-        RED.nodes.createNode(this,n);
-        var node = this;
-
-        node.on('close', function(done) {
-            if (myArduino) {
-                try {
-                    myArduino.close(function() {
-                        done();
-                        if (RED.settings.verbose) { node.log("port closed"); }
-                    });
-                } catch(e) { done(); }
-            } else { done(); }
-        });
-    }
-    RED.nodes.registerType("makers-board",MakersBoardNode);
-
     // The main node definition - most things happen in here
-    function MakersSensorNode(config) {
+    function FirstMakersNode(config) {
         // Create a RED node
         RED.nodes.createNode(this,config);
 
@@ -302,44 +198,5 @@ module.exports = function(RED) {
 
     // Register the node by name. This must be called before overriding any of the
     // Node functions.
-    RED.nodes.registerType("makers-sensor",MakersSensorNode);
-
-    // The main node definition - most things happen in here
-    function MakersSLTNode(config) {
-        // Create a RED node
-        RED.nodes.createNode(this,config);
-
-        var node = this;
-
-        // respond to inputs....
-        this.on('input', function (msg) {
-            getDataLHT()
-            .then(function(data) {
-                msg.payload = data;
-                node.send(msg);
-            })
-            .catch(function(err) {
-                node.warn(err);
-                sltErrorHandler();
-
-            })
-            
-        });
-
-        this.on("close", function() {
-            //closeBoard();
-
-        });
-    }
-
-    // Register the node by name. This must be called before overriding any of the
-    // Node functions.
-    RED.nodes.registerType("makers-slt",MakersSLTNode);
-
-
-    RED.httpAdmin.get("/arduinoports", RED.auth.needsPermission("arduino.read"), function(req,res) {
-        serialport.list(function (err, ports) {
-            res.json(ports);
-        });
-    });
+    RED.nodes.registerType("firstmakers",FirstMakersNode);
 }

@@ -10,7 +10,6 @@
 	"keywords": [ "node-red" ],
 	"dependencies" : {
 		"q":"*",
-		"node-hid":"*",
 		"firmata":"*",
 		"serialport":"latest"
 	},
